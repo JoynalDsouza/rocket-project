@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const morgan = require("morgan");
 
 const planetsRouter = require("./routes/planets/planets.router");
 
@@ -12,6 +13,8 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+
+app.use(morgan("combined"));
 
 //json parser middleware
 app.use(express.json());
