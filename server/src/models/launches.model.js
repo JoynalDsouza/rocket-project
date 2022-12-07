@@ -40,9 +40,13 @@ async function saveLaunch(launch) {
   if (!planet.length) {
     throw new Error("Planet does not exsits");
   }
-  await launchesDB.updateOne({ flightNumber: launch.flightNumber }, launch, {
-    upsert: true,
-  });
+  await launchesDB.findOneAndUpdate(
+    { flightNumber: launch.flightNumber },
+    launch,
+    {
+      upsert: true,
+    }
+  );
 }
 
 async function scheduleNewLaunch(launch) {
