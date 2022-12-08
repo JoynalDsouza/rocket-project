@@ -2,10 +2,6 @@ const launchesDB = require("./launches.mongo");
 
 const planets = require("./planets.mongo");
 
-const launches = new Map();
-
-let latestFlightNumber = 100;
-
 const launch = {
   flightNumber: 100,
   mission: "Kepler Exploration X",
@@ -17,7 +13,6 @@ const launch = {
   success: true,
 };
 
-// launches.set(launch.flightNumber, launch);
 // saveLaunch(launch);
 
 async function existsLaunchById(launchId) {
