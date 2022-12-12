@@ -3,10 +3,9 @@ const cors = require("cors");
 const path = require("path");
 const morgan = require("morgan");
 
-const planetsRouter = require("./routes/planets/planets.router");
-const launchesRouter = require("./routes/launches/launches.router");
-
 const app = express();
+
+const apiRouter = require("./routes/api");
 
 //cors middleware
 app.use(
@@ -22,8 +21,7 @@ app.use(express.json());
 //serve static files from public folder
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-app.use("/planets", planetsRouter);
-app.use("/launches", launchesRouter);
+app.use("/v1", apiRouter);
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
