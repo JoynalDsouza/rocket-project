@@ -20,6 +20,7 @@ const launch = {
 const SPACEX_API_URL = "https://api.spacexdata.com/v4/launches/query";
 
 async function populateLaunches() {
+  console.log("Downloading Launch data...");
   const response = await axios.post(SPACEX_API_URL, {
     query: {},
     options: {
@@ -35,6 +36,11 @@ async function populateLaunches() {
       ],
     },
   });
+
+  if (response.status !== 200) {
+    console.log("Problem with downloading launch data");
+    throw new Error("Downloading launch data failed");
+  }
 
   const launchDocs = response.data.docs;
 
@@ -53,9 +59,9 @@ async function populateLaunches() {
       success: launchDoc["success"],
     };
 
-    console.log(`${launch.flightNumber} ${launch.mission} ${launch.customers}`);
+    // console.log(`${launch.flightNumber} ${launch.mission} ${launch.customers}`);
 
-    //TODO : populate launches collection
+    await saveLaunch(launch);
   }
 }
 
@@ -67,7 +73,7 @@ async function loadLaunchData() {
   });
 
   if (firstLaunch) {
-    console.log("Launches data exixts");
+    console.log("Launches data exists");
   } else {
     await populateLaunches();
   }
@@ -92,11 +98,6 @@ async function getAllLaunches() {
 }
 
 async function saveLaunch(launch) {
-  const planet = await planets.find({ keplerName: launch.target });
-
-  if (!planet.length) {
-    throw new Error("Planet does not exsits");
-  }
   await launchesDB.findOneAndUpdate(
     { flightNumber: launch.flightNumber },
     launch,
@@ -107,6 +108,11 @@ async function saveLaunch(launch) {
 }
 
 async function scheduleNewLaunch(launch) {
+  const planet = await planets.find({ keplerName: launch.target });
+
+  if (!planet.length) {
+    throw new Error("Planet does not exsits");
+  }
   const flightNumber = (await getLatestFlightNumber()) + 1;
   const newLaunch = Object.assign(launch, {
     customers: ["ZTM", "NASA"],
